@@ -1,0 +1,72 @@
+/* Glovo Design Tokens */
+@font-face {
+  font-display: swap;
+  font-family: 'Glovo Sans';
+  font-weight: 400;
+  src: url('https://glovoapp.com/fonts/GlovoSans-Book.woff2') format('woff2'),
+       url('https://glovoapp.com/fonts/GlovoSans-Book.woff') format('woff');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Glovo Sans';
+  font-weight: 500;
+  src: url('https://glovoapp.com/fonts/GlovoSans-Medium.woff2') format('woff2'),
+       url('https://glovoapp.com/fonts/GlovoSans-Medium.woff') format('woff');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Glovo Sans';
+  font-weight: 700;
+  src: url('https://glovoapp.com/fonts/GlovoSans-Bold.woff2') format('woff2'),
+       url('https://glovoapp.com/fonts/GlovoSans-Bold.woff') format('woff');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Glovo Sans';
+  font-weight: 900;
+  src: url('https://glovoapp.com/fonts/GlovoSans-Black.woff2') format('woff2'),
+       url('https://glovoapp.com/fonts/GlovoSans-Black.woff') format('woff');
+}
+
+:root {
+  /* Brand Colors */
+  --color-brand-yellow: #FFC244;
+  --color-brand-yellow-soft: #FFE4A0;
+  --color-brand-yellow-highlight: #FFC244;
+  --color-brand-green: #00A082;
+  --color-brand-green-dark: #00846B;
+  --color-brand-green-tint: #E4F5F2;
+  --color-mint-bg: #E9F8F5;
+  --color-cream-pill: #FFF3DA;
+
+  /* Neutrals */
+  --color-text-primary: #1D1D1D;
+  --color-text-secondary: #5C5C5C;
+  --color-text-muted: #767676;
+  --color-white: #FFFFFF;
+  --color-footer-bg: #1D1D1D;
+  --color-border-subtle: rgba(29, 29, 29, 0.12);
+
+  /* Typography */
+  --font-family-base: 'Glovo Sans', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Radii */
+  --radius-pill: 9999px;
+  --radius-card: 16px;
+  --radius-input: 12px;
+
+  /* Shadows */
+  --shadow-input: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-card-hover: 0 10px 24px rgba(0, 0, 0, 0.12);
+  --shadow-modal: 0 24px 48px rgba(0, 0, 0, 0.22);
+
+  /* Layout */
+  --container-max: 1140px;
+  --header-height: 76px;
+  --transition-fast: 0.2s ease;
+  --transition-med: 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
