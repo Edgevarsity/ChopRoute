@@ -33,7 +33,7 @@
         <p class="sticky-prompt">
           Enter your address to know <span class="sticky-prompt-highlight">what's near you</span>
         </p>
-        <form class="sticky-address-form" id="stickyAddressForm">
+        <form class="sticky-address-form" id="stickyAddressForm" autocomplete="off">
           <svg class="input-pin-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
             <circle cx="12" cy="10" r="3"></circle>
@@ -45,6 +45,7 @@
               <polyline points="12 5 19 12 12 19"></polyline>
             </svg>
           </button>
+          <ul class="address-suggestions" id="stickyAddressSuggestions" role="listbox" aria-label="Suggested addresses"></ul>
         </form>
       </div>
 
@@ -68,13 +69,14 @@
         <div class="hero-content">
           <h1 class="hero-title">Food delivery and more</h1>
           <p class="hero-subtitle">Groceries, shops, pharmacies, anything!</p>
-          <form class="hero-address-form" id="heroAddressForm">
+          <form class="hero-address-form" id="heroAddressForm" autocomplete="off">
             <svg class="input-pin-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
               <circle cx="12" cy="10" r="3"></circle>
             </svg>
             <input type="text" id="heroAddressInput" placeholder="What's your address?" aria-label="What's your address?" />
             <button type="button" class="btn-location" id="useLocationBtn">Use current location</button>
+            <ul class="address-suggestions" id="heroAddressSuggestions" role="listbox" aria-label="Suggested addresses"></ul>
           </form>
         </div>
       </div>
@@ -231,10 +233,10 @@
           <h2 class="download-title">Download the app</h2>
           <p class="download-subtitle">Order anything and track it in real time with the Glovo app.</p>
           <div class="store-badges">
-            <a href="#download" class="store-badge-link" aria-label="Download on the App Store">
+            <a href="#download" class="store-badge-link" data-app-download="ios" aria-label="Download on the App Store">
               <img src="assets/svg/app-store-badge.svg" alt="Download on the App Store" />
             </a>
-            <a href="#download" class="store-badge-link" aria-label="Get it on Google Play">
+            <a href="#download" class="store-badge-link" data-app-download="android" aria-label="Get it on Google Play">
               <img src="assets/svg/google-play-badge.svg" alt="Get it on Google Play" />
             </a>
           </div>
@@ -318,42 +320,42 @@
         <div>
           <h3 class="footer-col-title">Let's do it together</h3>
           <ul class="footer-links">
-            <li><a href="#together">Careers</a></li>
-            <li><a href="#together">Register your business</a></li>
-            <li><a href="#together">Couriers</a></li>
-            <li><a href="#together">Glovo Business</a></li>
+            <li><a href="#together" data-register="Careers">Careers</a></li>
+            <li><a href="#together" data-register="Register your business">Register your business</a></li>
+            <li><a href="#together" data-register="Become a rider">Couriers</a></li>
+            <li><a href="#together" data-register="Register your business">Glovo Business</a></li>
           </ul>
         </div>
 
         <div>
           <h3 class="footer-col-title">Links of interest</h3>
           <ul class="footer-links">
-            <li><a href="#top">About us</a></li>
-            <li><a href="#top">FAQ</a></li>
-            <li><a href="#top">Blog</a></li>
-            <li><a href="#top">Contact us</a></li>
-            <li><a href="#top">Security</a></li>
+            <li><a href="#top" data-info="About us">About us</a></li>
+            <li><a href="#top" data-info="FAQ">FAQ</a></li>
+            <li><a href="#top" data-info="Blog">Blog</a></li>
+            <li><a href="#top" data-contact>Contact us</a></li>
+            <li><a href="#top" data-info="Security">Security</a></li>
             <li><button type="button" data-open-login>Log in</button></li>
           </ul>
         </div>
 
         <div>
           <div class="footer-badges">
-            <a href="#download" aria-label="Download on the App Store">
+            <a href="#download" data-app-download="ios" aria-label="Download on the App Store">
               <img src="assets/svg/app-store-outline.svg" alt="Download on the App Store" />
             </a>
-            <a href="#download" aria-label="Get it on Google Play">
+            <a href="#download" data-app-download="android" aria-label="Get it on Google Play">
               <img src="assets/svg/google-play-outline.svg" alt="Get it on Google Play" />
             </a>
           </div>
           <ul class="footer-links">
-            <li><a href="#top">Terms &amp; Conditions</a></li>
-            <li><a href="#top">Privacy Policy</a></li>
-            <li><a href="#top">Cookies Policy</a></li>
-            <li><a href="#top">Compliance</a></li>
-            <li><a href="#top">Configure the cookies</a></li>
-            <li><a href="#top">Digital Services Act</a></li>
-            <li><a href="#top">European Accessibility Act</a></li>
+            <li><a href="#top" data-info="Terms &amp; Conditions">Terms &amp; Conditions</a></li>
+            <li><a href="#top" data-info="Privacy Policy">Privacy Policy</a></li>
+            <li><a href="#top" data-info="Cookies Policy">Cookies Policy</a></li>
+            <li><a href="#top" data-info="Compliance">Compliance</a></li>
+            <li><button type="button" data-cookies>Configure the cookies</button></li>
+            <li><a href="#top" data-info="Digital Services Act">Digital Services Act</a></li>
+            <li><a href="#top" data-info="European Accessibility Act">European Accessibility Act</a></li>
           </ul>
         </div>
       </div>
@@ -376,16 +378,41 @@
     </div>
   </footer>
 
-  <!-- Login Modal -->
+  <!-- Login / Sign Up Modal -->
   <div class="modal-backdrop" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginModalTitle">
     <div class="modal-card">
       <button type="button" class="modal-close" id="closeLoginModal" aria-label="Close modal">&times;</button>
       <h2 class="modal-title" id="loginModalTitle">Welcome to Glovo</h2>
-      <p class="modal-subtitle">Enter your email or phone number to log in or sign up.</p>
+      <p class="modal-subtitle">Log in or create an account to track orders and save addresses.</p>
+      <div class="modal-tabs" role="tablist">
+        <button type="button" class="modal-tab is-active" data-auth-tab="login" role="tab" aria-selected="true">Log in</button>
+        <button type="button" class="modal-tab" data-auth-tab="signup" role="tab" aria-selected="false">Sign up</button>
+      </div>
       <form class="modal-form" id="loginForm">
-        <input type="email" class="modal-input" id="loginEmail" placeholder="Email address" required />
-        <button type="submit" class="btn-primary-green modal-submit">Continue</button>
+        <div class="form-group is-hidden" id="signupNameGroup">
+          <label class="form-label" for="loginName">Full name</label>
+          <input type="text" class="modal-input" id="loginName" placeholder="Alex Rivera" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="loginEmail">Email or phone number</label>
+          <input type="text" class="modal-input" id="loginEmail" placeholder="you@example.com" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="loginPassword">Password</label>
+          <input type="password" class="modal-input" id="loginPassword" placeholder="Enter your password" minlength="6" required />
+        </div>
+        <button type="submit" class="btn-primary-green modal-submit" id="loginSubmitBtn">Log in</button>
       </form>
+    </div>
+  </div>
+
+  <!-- Universal Interactive Modal (Stores, Partners, Registration, Contact, Cookies, Info) -->
+  <div class="modal-backdrop" id="appModal" role="dialog" aria-modal="true" aria-labelledby="appModalTitle">
+    <div class="modal-card" id="appModalCard">
+      <button type="button" class="modal-close" id="closeAppModal" aria-label="Close modal">&times;</button>
+      <h2 class="modal-title" id="appModalTitle"></h2>
+      <p class="modal-subtitle" id="appModalSubtitle"></p>
+      <div class="app-modal-body" id="appModalBody"></div>
     </div>
   </div>
 
