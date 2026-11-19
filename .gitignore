@@ -1,5 +1,4 @@
-# Reference snapshots & local OS files
-Glovo.html
-Glovo_ whatever you order, in minutes! _ Glovo.html
-Glovo_ whatever you order, in minutes! _ Glovo_files/
+# OS & local files
 .DS_Store
+Thumbs.db
+.env
