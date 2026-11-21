@@ -4,45 +4,386 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#421c42">
-  <meta name="description" content="ChopRoute is a student front-end demo for browsing local food and groceries.">
-  <title>ChopRoute | Local food delivery demo</title>
+  <meta name="description" content="ChopRoute is a student front-end demo for browsing local food and groceries with real OpenStreetMap address lookup.">
+  <meta property="og:title" content="ChopRoute — Good food. Short route.">
+  <meta property="og:description" content="A student front-end delivery demo with real OpenStreetMap address lookup and sample local food and grocery listings.">
+  <meta property="og:type" content="website">
+  <title>ChopRoute | Student food delivery demo</title>
   <link rel="icon" href="assets/svg/choproute.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <script src="js/data.js" defer></script>
+  <script src="js/address.js" defer></script>
+  <script src="js/cart.js" defer></script>
   <script src="js/main.js" defer></script>
 </head>
 <body>
-  <header class="shell header">
-    <a href="./" class="brand"><img src="assets/svg/choproute.svg" alt="" width="42" height="42">ChopRoute</a>
-    <a href="#browse" class="nav-link">Browse menu <span aria-hidden="true">↓</span></a>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Full-bleed Sticky Header -->
+  <header class="site-header" id="site-header">
+    <div class="band-inner header">
+      <a href="./" class="brand">
+        <img src="assets/svg/choproute.svg" alt="" width="40" height="40">
+        <span>ChopRoute</span>
+      </a>
+
+      <button type="button" id="header-address-btn" class="address-pill" aria-label="Set or change delivery address">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 1 1 13 0c0 5.4-6.5 11-6.5 11Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="12" cy="10" r="2.25" fill="none" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <span id="header-address-text" class="address-pill-text">Set delivery address</span>
+      </button>
+
+      <nav class="header-actions" aria-label="Primary">
+        <a href="#browse" class="nav-link">Menu</a>
+        <a href="#how-it-works" class="nav-link nav-link-hide-sm">How it works</a>
+        <button type="button" id="bag-toggle" class="bag-button" aria-haspopup="dialog" aria-controls="bag-drawer" aria-expanded="false">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 8h12l-1 12H7L6 8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M9 8V6a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span>Bag</span>
+          <span id="bag-count" class="bag-badge" aria-hidden="true">0</span>
+        </button>
+      </nav>
+    </div>
   </header>
-  <main class="shell">
-    <section class="hero" aria-labelledby="hero-title">
-      <div>
-        <p class="project-label">Student front-end project</p>
-        <h1 id="hero-title">Good food.<br>Short route.</h1>
-        <p class="intro">Explore a sample delivery menu for meals, snacks and everyday groceries.</p>
-        <a href="#browse" class="cta">Explore the menu <span aria-hidden="true">↗</span></a>
+
+  <main id="main-content">
+    <!-- Band 1: Full-bleed Plum Hero -->
+    <section class="hero-band" aria-labelledby="hero-title">
+      <div class="band-inner hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Student front-end project · Local food &amp; groceries</p>
+          <h1 id="hero-title">Good food.<br>Short route.</h1>
+          <p class="intro">Enter your street to check real delivery times and explore freshly prepared meals, hot snacks, and market groceries near you.</p>
+
+          <div class="address-widget" id="address-widget">
+            <label for="address-input" class="sr-only">Delivery address</label>
+            <div class="address-field">
+              <svg class="icon address-field-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 1 1 13 0c0 5.4-6.5 11-6.5 11Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="10" r="2.25" fill="none" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              <input
+                id="address-input"
+                class="address-input"
+                type="text"
+                autocomplete="off"
+                spellcheck="false"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-expanded="false"
+                aria-controls="address-suggestions"
+                aria-describedby="address-hint"
+                placeholder="What's your address? (street, area, or city)"
+              >
+              <button type="button" id="address-clear" class="icon-btn" aria-label="Clear address" hidden>
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M18 6 6 18M6 6l12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </button>
+              <button type="button" id="locate-btn" class="locate-btn" aria-label="Use current location" title="Use current location">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+                  <path d="M12 2v3m0 14v3M2 12h3m14 0h3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span class="locate-label">Use current location</span>
+              </button>
+            </div>
+
+            <ul id="address-suggestions" class="suggestions" role="listbox" aria-label="Address suggestions" hidden></ul>
+
+            <div id="address-status" class="address-status" hidden></div>
+
+            <p id="address-hint" class="address-hint">
+              Real address search powered by <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>.
+            </p>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="hero-orb" aria-hidden="true"></div>
+          <img
+            class="hero-image"
+            src="assets/images/hero-burger.png"
+            alt="Illustration of a stacked burger"
+            width="452"
+            height="405"
+          >
+        </div>
       </div>
-      <img class="hero-image" src="assets/images/hero-burger.png" alt="Illustration of a stacked burger">
+
+      <!-- Interactive Category Bubbles spanning the hero -->
+      <div class="band-inner hero-categories-wrap">
+        <div class="hero-categories" role="group" aria-label="Jump to menu category">
+          <button type="button" class="cat-bubble" data-hero-filter="all">
+            <span class="cat-circle">
+              <svg viewBox="0 0 48 48" aria-hidden="true">
+                <circle cx="24" cy="24" r="14" fill="#ff9a80" opacity="0.28"/>
+                <path d="M15 22h18M17 22l1.5 11h11L31 22M20 17a4 4 0 0 1 8 0" fill="none" stroke="#421c42" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span class="cat-pill">All Menu</span>
+          </button>
+
+          <button type="button" class="cat-bubble" data-hero-filter="meals">
+            <span class="cat-circle">
+              <svg viewBox="0 0 48 48" aria-hidden="true">
+                <circle cx="24" cy="26" r="11" fill="#ff9a80" opacity="0.32"/>
+                <path d="M12 27h24a12 12 0 0 1-24 0Z" fill="none" stroke="#421c42" stroke-width="2.5" stroke-linejoin="round"/>
+                <path d="M18 19c0-2 1.5-2.5 1.5-4.5M24 18c0-2 1.5-2.5 1.5-4.5M30 19c0-2 1.5-2.5 1.5-4.5" fill="none" stroke="#421c42" stroke-width="2.2" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <span class="cat-pill">Hot Meals</span>
+          </button>
+
+          <button type="button" class="cat-bubble" data-hero-filter="snacks">
+            <span class="cat-circle">
+              <svg viewBox="0 0 48 48" aria-hidden="true">
+                <circle cx="25" cy="24" r="11" fill="#ff9a80" opacity="0.32"/>
+                <path d="M15 33 33 15M18 24l6 6M23 19l6 6M15 33l-2 2M33 15l2-2" fill="none" stroke="#421c42" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span class="cat-pill">Grill &amp; Snacks</span>
+          </button>
+
+          <button type="button" class="cat-bubble" data-hero-filter="groceries">
+            <span class="cat-circle">
+              <svg viewBox="0 0 48 48" aria-hidden="true">
+                <circle cx="24" cy="25" r="11" fill="#ff9a80" opacity="0.32"/>
+                <path d="M15 21h18l-2 13H17l-2-13Z" fill="none" stroke="#421c42" stroke-width="2.5" stroke-linejoin="round"/>
+                <path d="M20 21v-3a4 4 0 0 1 8 0v3M21 27h6" fill="none" stroke="#421c42" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <span class="cat-pill">Groceries</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Smooth curved wave divider into Menu Band -->
+      <div class="wave-divider wave-to-cream" aria-hidden="true">
+        <svg viewBox="0 0 1440 72" preserveAspectRatio="none">
+          <path d="M0,48 C360,0 1080,0 1440,48 L1440,72 L0,72 Z"/>
+        </svg>
+      </div>
     </section>
-    <section class="browse" id="browse" aria-labelledby="browse-title">
-      <h2 id="browse-title">What are you craving?</h2>
-      <div class="filters" role="group" aria-label="Filter sample menu">
-        <button type="button" data-filter="all" aria-pressed="true">All</button>
-        <button type="button" data-filter="meals" aria-pressed="false">Meals</button>
-        <button type="button" data-filter="snacks" aria-pressed="false">Snacks</button>
-        <button type="button" data-filter="groceries" aria-pressed="false">Groceries</button>
+
+    <!-- Band 2: Full-width Menu Browse Section -->
+    <section class="browse-band" id="browse" aria-labelledby="browse-title">
+      <div class="band-inner">
+        <div class="browse-head">
+          <div>
+            <p class="eyebrow eyebrow-dark">Fresh on the route today</p>
+            <h2 id="browse-title">What are you craving?</h2>
+          </div>
+
+          <div class="search-wrap">
+            <label for="menu-search" class="sr-only">Search menu</label>
+            <svg class="icon search-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="m20 20-3.5-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <input id="menu-search" class="menu-search" type="search" placeholder="Search dishes, kitchens, or ingredients...">
+          </div>
+        </div>
+
+        <div class="browse-toolbar">
+          <div class="filters" role="group" aria-label="Filter menu by category">
+            <button type="button" data-filter="all" aria-pressed="true">All</button>
+            <button type="button" data-filter="meals" aria-pressed="false">Meals</button>
+            <button type="button" data-filter="snacks" aria-pressed="false">Snacks</button>
+            <button type="button" data-filter="groceries" aria-pressed="false">Groceries</button>
+          </div>
+          <p id="results-count" class="results-count">9 items</p>
+        </div>
+
+        <div id="menu-grid" class="cards" aria-live="polite"></div>
+
+        <div id="menu-empty" class="empty-state" hidden>
+          <p>No dishes match your search right now.</p>
+          <button type="button" id="reset-filters" class="btn-secondary">Reset filters</button>
+        </div>
+
+        <noscript>
+          <p class="empty-state">Enable JavaScript to search real OpenStreetMap addresses, filter the menu, and use the delivery bag.</p>
+        </noscript>
       </div>
-      <div class="cards">
-        <article data-category="meals"><p class="category">Meals</p><h3>Smoky jollof bowl</h3><p>Party jollof, grilled chicken and sweet plantain.</p></article>
-        <article data-category="snacks"><p class="category">Snacks</p><h3>Crunchy suya bites</h3><p>Spiced beef skewers with sliced onions.</p></article>
-        <article data-category="groceries"><p class="category">Groceries</p><h3>Market fruit basket</h3><p>A selection of bananas, oranges and pineapple.</p></article>
+    </section>
+
+    <!-- Band 3: Full-bleed Tinted Community / How It Works Section -->
+    <section class="community-band" id="how-it-works" aria-labelledby="community-title">
+      <div class="wave-divider wave-top-tint" aria-hidden="true">
+        <svg viewBox="0 0 1440 72" preserveAspectRatio="none">
+          <path d="M0,48 C360,0 1080,0 1440,48 L1440,72 L0,72 Z"/>
+        </svg>
+      </div>
+
+      <div class="band-inner community-inner">
+        <div class="community-header">
+          <p class="eyebrow eyebrow-dark">Built for short routes</p>
+          <h2 id="community-title">From local kitchens to your doorstep</h2>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-item">
+            <div class="feature-medallion" aria-hidden="true">
+              <span class="medallion-blob"></span>
+              <span class="medallion-circle">
+                <svg viewBox="0 0 64 64">
+                  <path d="M32 52s-14-12.2-14-24a14 14 0 1 1 28 0c0 11.8-14 24-14 24Z" fill="#ff9a80" opacity="0.28"/>
+                  <path d="M32 52s-14-12.2-14-24a14 14 0 1 1 28 0c0 11.8-14 24-14 24Z" fill="none" stroke="#421c42" stroke-width="3" stroke-linejoin="round"/>
+                  <circle cx="32" cy="28" r="5" fill="#421c42"/>
+                </svg>
+              </span>
+            </div>
+            <h3>Pin any real street</h3>
+            <p>Search any neighborhood through OpenStreetMap or use one-tap GPS to get accurate distance and delivery estimates.</p>
+            <button type="button" id="cta-set-address" class="btn-primary">Set your address</button>
+          </article>
+
+          <article class="feature-item">
+            <div class="feature-medallion" aria-hidden="true">
+              <span class="medallion-blob medallion-blob--alt"></span>
+              <span class="medallion-circle">
+                <svg viewBox="0 0 64 64">
+                  <circle cx="32" cy="34" r="16" fill="#ff9a80" opacity="0.28"/>
+                  <path d="M16 36h32a16 16 0 0 1-32 0Z" fill="none" stroke="#421c42" stroke-width="3" stroke-linejoin="round"/>
+                  <path d="M24 25c0-3 2-4 2-7M32 23c0-3 2-4 2-7M40 25c0-3 2-4 2-7" fill="none" stroke="#421c42" stroke-width="2.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </div>
+            <h3>Curated local favorites</h3>
+            <p>Filter freshly cooked meals, spiced grill snacks, and crisp market produce with transparent prices and prep times.</p>
+            <a href="#browse" class="btn-primary">Browse the menu</a>
+          </article>
+
+          <article class="feature-item">
+            <div class="feature-medallion" aria-hidden="true">
+              <span class="medallion-blob medallion-blob--third"></span>
+              <span class="medallion-circle">
+                <svg viewBox="0 0 64 64">
+                  <rect x="18" y="22" width="28" height="26" rx="5" fill="#ff9a80" opacity="0.28"/>
+                  <path d="M18 24h28l-2.5 24h-23L18 24Z" fill="none" stroke="#421c42" stroke-width="3" stroke-linejoin="round"/>
+                  <path d="M25 24v-5a7 7 0 0 1 14 0v5" fill="none" stroke="#421c42" stroke-width="3" stroke-linecap="round"/>
+                  <path d="m26 36 4 4 8-8" fill="none" stroke="#421c42" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </div>
+            <h3>Simple demo checkout</h3>
+            <p>Your bag stays saved as you browse. Review your drop-off, confirm your order, and watch your route progress live.</p>
+            <button type="button" id="cta-open-bag" class="btn-primary">Open your bag</button>
+          </article>
+        </div>
       </div>
     </section>
   </main>
-  <footer class="shell footer">
-    <a href="./" class="brand"><img src="assets/svg/choproute.svg" alt="" width="36" height="36">ChopRoute</a>
-    <p>Student demo · Sample listings only</p>
+
+  <!-- Band 4: Full-bleed Dark Plum Footer -->
+  <footer class="site-footer">
+    <div class="wave-divider wave-top-dark" aria-hidden="true">
+      <svg viewBox="0 0 1440 72" preserveAspectRatio="none">
+        <path d="M0,56 C420,0 1020,0 1440,56 L1440,72 L0,72 Z"/>
+      </svg>
+    </div>
+
+    <div class="band-inner footer-inner">
+      <div class="footer-grid">
+        <div class="footer-brand-col">
+          <a href="./" class="brand brand-light">
+            <img src="assets/svg/choproute.svg" alt="" width="38" height="38">
+            <span>ChopRoute</span>
+          </a>
+          <p class="footer-tagline">Good food, short route. A student front-end demo with real OpenStreetMap address lookup and sample local listings only.</p>
+        </div>
+
+        <div class="footer-col">
+          <h3>Explore</h3>
+          <ul>
+            <li><button type="button" class="footer-link-btn" data-footer-filter="all">Full menu</button></li>
+            <li><button type="button" class="footer-link-btn" data-footer-filter="meals">Hot meals</button></li>
+            <li><button type="button" class="footer-link-btn" data-footer-filter="snacks">Grill &amp; snacks</button></li>
+            <li><button type="button" class="footer-link-btn" data-footer-filter="groceries">Fresh groceries</button></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h3>Quick actions</h3>
+          <ul>
+            <li><button type="button" class="footer-link-btn" id="footer-set-address">Set delivery address</button></li>
+            <li><button type="button" class="footer-link-btn" id="footer-open-bag">View your bag</button></li>
+            <li><a href="#how-it-works">How ChopRoute works</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h3>Open data &amp; info</h3>
+          <ul>
+            <li><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap License</a></li>
+            <li><a href="https://photon.komoot.io/" target="_blank" rel="noopener noreferrer">Photon Search Engine</a></li>
+            <li><a href="https://nominatim.openstreetmap.org/" target="_blank" rel="noopener noreferrer">Nominatim Geocoder</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>ChopRoute · Student front-end demo · Sample listings only</p>
+        <p>Address data &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors</p>
+      </div>
+    </div>
   </footer>
+
+  <!-- Slide-over Bag Drawer -->
+  <div id="bag-overlay" class="drawer-overlay" hidden>
+    <div class="drawer-backdrop" data-close-drawer></div>
+    <aside
+      id="bag-drawer"
+      class="drawer"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="bag-title"
+      tabindex="-1"
+    >
+      <div class="drawer-header">
+        <h2 id="bag-title">Your bag</h2>
+        <button type="button" id="bag-close" class="icon-btn icon-btn-dark" aria-label="Close bag">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M18 6 6 18M6 6l12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="drawer-body">
+        <div id="drawer-address" class="drawer-address"></div>
+        <div id="bag-items" class="bag-items"></div>
+        <div id="order-confirmation" class="order-confirmation" hidden></div>
+      </div>
+
+      <div id="bag-footer" class="drawer-footer" hidden>
+        <dl class="summary-lines">
+          <div>
+            <dt>Subtotal</dt>
+            <dd id="summary-subtotal">₦0</dd>
+          </div>
+          <div>
+            <dt>Delivery</dt>
+            <dd id="summary-delivery">₦1,200</dd>
+          </div>
+          <div class="summary-total">
+            <dt>Total</dt>
+            <dd id="summary-total">₦0</dd>
+          </div>
+        </dl>
+        <p id="checkout-warning" class="checkout-warning" hidden></p>
+        <button type="button" id="place-order-btn" class="btn-primary btn-full">Place demo order</button>
+      </div>
+    </aside>
+  </div>
+
+  <div id="sr-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 </body>
 </html>
